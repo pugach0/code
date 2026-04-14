@@ -1,4 +1,4 @@
-log="$HOME/.config/code/study_tracker/log1.txt"
+log="$HOME/logs/log1.txt"
 timer="$HOME/.config/code/study_tracker/timer.txt"
 
 startTimer(){
