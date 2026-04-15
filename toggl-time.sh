@@ -1,5 +1,5 @@
 #!/bin/bash
-timer="$HOME/.config/code/study_tracker/timer.txt"
+timer="$HOME/.config/code/variables/st/timer.txt"
 
 if [[ ! -f "$timer" ]] || [[ ! -s "$timer" ]]; then
     echo "00:00:00"

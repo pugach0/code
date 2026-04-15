@@ -1,6 +1,6 @@
 log="$HOME/logs/log1.txt"
-timer="$HOME/.config/code/study_tracker/timer.txt"
-isPaused="$HOME/.config/code/study_tracker/isPaused.txt"
+timer="$HOME/.config/code/variables/st/timer.txt"
+isPaused="$HOME/.config/code/veriables/st/isPaused.txt"
 topic=""
 
 startTimer(){
