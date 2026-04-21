@@ -1,13 +1,12 @@
 log="$HOME/logs/log1.txt"
 timer="$HOME/.config/code/variables/st/timer.txt"
-isPaused="$HOME/.config/code/veriables/st/isPaused.txt"
-topic=""
+isPaused="$HOME/.config/code/variables/st/isPaused.txt"
+topic="$HOME/.config/code/variables/st/topic.txt"
 
 startTimer(){
     if [[ $1 == "I" ]]; then
-        topic=$(echo "" | dmenu -p "Choose topic")
-        echo "$(date +%d.%m.%y\ %T) START "$topic"" >> "$log"
-        echo "logged start"
+        dmenu -p "Choose topic" < /dev/null > "$topic"
+        #echo "$(date +%d.%m.%y\ %T) START "$topic"" >> "$log"
         start=$(date +%s)
         polybar topmiddle &
         while true; do
@@ -28,12 +27,13 @@ startTimer(){
 
 
 finishTimer(){
-    echo "$(date +%d.%m.%y\ %T) FINISH $(~/.local/bin/toggl-time.sh)"  >> $log
+    echo "$(date +%d.%m.%y\ %T) FINISH $(~/.config/code/study_tracker/timer/toggl-time.sh) $(cat $topic)"  >> $log #breaks website if topic with spaces
     echo "logging finished"
     [[ -f "$timer.pid" ]] && kill "$(cat "$timer.pid")" 2>/dev/null
     rm -f "$timer.pid"
     > "$timer"
     pkill -f "polybar topmiddle"
+    pkill -f "study"
 }
 
 togglPause (){
@@ -49,7 +49,8 @@ togglPause (){
 
 while getopts "sfp" opt; do
     case $opt in
-        s)  startTimer "I" &
+        s) 
+	    startTimer "I" &
             echo $! > "$timer.pid"
             echo "F" > $isPaused
             ;;
