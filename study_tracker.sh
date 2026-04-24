@@ -47,7 +47,12 @@ togglPause (){
     fi
 }
 
-while getopts "sfp" opt; do
+addEvent(){
+    event=$(echo "" | dmenu -p "Add event")
+    echo "$(date +%d.%m.%y\ %T) EVENT ${event// /_}" >> $log
+}
+
+while getopts "sfpe" opt; do
     case $opt in
         s) 
 	    startTimer "I" &
@@ -56,6 +61,7 @@ while getopts "sfp" opt; do
             ;;
         f) finishTimer ;;
         p) togglPause ;;
+        e) addEvent ;;
         \?) echo "invalid option"; exit 1;;
     esac
 done
