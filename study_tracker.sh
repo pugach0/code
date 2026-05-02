@@ -1,11 +1,12 @@
-log="$HOME/logs/log1.txt"
+log="$HOME/.config/logs/log1.txt"
 timer="$HOME/.config/code/variables/st/timer.txt"
 isPaused="$HOME/.config/code/variables/st/isPaused.txt"
 topic="$HOME/.config/code/variables/st/topic.txt"
 
 startTimer(){
     if [[ $1 == "I" ]]; then
-        dmenu -p "Choose topic" < /dev/null > "$topic"
+        topicTmp=$(echo "" | dmenu -p "Choose topic")
+        echo "${topicTmp// /_}" > $topic
         #echo "$(date +%d.%m.%y\ %T) START "$topic"" >> "$log"
         start=$(date +%s)
         polybar topmiddle &
@@ -27,7 +28,7 @@ startTimer(){
 
 
 finishTimer(){
-    echo "$(date +%d.%m.%y\ %T) FINISH $(~/.config/code/study_tracker/timer/toggl-time.sh) $(cat $topic)"  >> $log #breaks website if topic with spaces
+    echo "$(date +%d.%m.%y\ %T) FINISH $(~/.config/code/study_tracker/timer/toggl-time.sh) $(cat $topic)"  >> $log 
     echo "logging finished"
     [[ -f "$timer.pid" ]] && kill "$(cat "$timer.pid")" 2>/dev/null
     rm -f "$timer.pid"
@@ -52,7 +53,16 @@ addEvent(){
     echo "$(date +%d.%m.%y\ %T) EVENT ${event// /_}" >> $log
 }
 
-while getopts "sfpe" opt; do
+dayOff(){
+    dateOff=$(echo "" | dmenu -p "Enter date (dd.mm.yy)")
+    if [[ $dateOff =~ ^[0-9]{2}\.[0-9]{2}\.[0-9]{2}$ ]]; then
+        echo "$dateOff DAYOFF" >> $log
+    else
+        dayOff
+    fi
+}
+
+while getopts "sfpeo" opt; do
     case $opt in
         s) 
 	    startTimer "I" &
@@ -62,6 +72,7 @@ while getopts "sfpe" opt; do
         f) finishTimer ;;
         p) togglPause ;;
         e) addEvent ;;
+        o) dayOff ;;
         \?) echo "invalid option"; exit 1;;
     esac
 done
