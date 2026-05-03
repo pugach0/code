@@ -1,4 +1,5 @@
 #!/bin/bash
+config="$HOME/.config/study_tracker/"
 cd $HOME
 rm -rf "$HOME/study_tracker/"
 git clone "https://github.com/pugach0/study_tracker.git"
