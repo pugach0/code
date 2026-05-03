@@ -9,9 +9,9 @@ read answer2
 
 function install(){
     mkdir -p "$config"
-    cp -r "$PWD/*" "$config"
-    cp "$PWD/study_tracker.sh" "$HOME/.local/bin/"
-    cp "$PWD/toggl-time.sh" "$HOME/.local/bin/"
+    cp -r $PWD/* "$config"
+    cp $PWD/study_tracker.sh "$HOME/.local/bin/"
+    cp $PWD/toggl-time.sh "$HOME/.local/bin/"
 }
 
 function polybarConfigInstall(){

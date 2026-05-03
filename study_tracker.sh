@@ -57,7 +57,7 @@ dayOff(){
     dateOff=$(echo "" | dmenu -p "Enter date (dd.mm.yy)")
     if [[ $dateOff =~ ^[0-9]{2}\.[0-9]{2}\.[0-9]{2}$ ]]; then
         echo "$dateOff DAYOFF" >> $log
-    else if [[ $dateOff =~ Q ]]; then
+    elif [[ $dateOff =~ Q ]]; then
         dayOff
     fi
 }
