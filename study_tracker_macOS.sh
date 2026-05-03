@@ -1,7 +1,8 @@
-log="$HOME/.config/logs/log1.txt"
-timer="$HOME/.config/code/variables/st/timer.txt"
-isPaused="$HOME/.config/code/variables/st/isPaused.txt"
-topic="$HOME/.config/code/variables/st/topic.txt"
+#!/bin/zsh
+log="$HOME/.config/study_tracker/log.txt"
+timer="$HOME/.config/study_tracker/timer.txt"
+isPaused="$HOME/.config/study_tracker/isPaused.txt"
+topic="$HOME/.config/study_tracker/topic.txt"
 
 startTimer(){
     if [[ $1 == "I" ]]; then
@@ -9,7 +10,7 @@ startTimer(){
         echo "${topicTmp// /_}" > $topic
         #echo "$(date +%d.%m.%y\ %T) START "$topic"" >> "$log"
         start=$(date +%s)
-        polybar topmiddle &
+        #polybar topmiddle &
         while true; do
             now=$(date +%s)
             echo $(( now - start )) > "$timer"
@@ -28,7 +29,7 @@ startTimer(){
 
 
 finishTimer(){
-    echo "$(date +%d.%m.%y\ %T) FINISH $(~/.config/code/study_tracker/timer/toggl-time.sh) $(cat $topic)"  >> $log 
+    echo "$(date +%d.%m.%y\ %T) FINISH $(~/.config/study_tracker/toggl-time_macOS.sh) $(cat $topic)"  >> $log 
     echo "logging finished"
     [[ -f "$timer.pid" ]] && kill "$(cat "$timer.pid")" 2>/dev/null
     rm -f "$timer.pid"
@@ -70,9 +71,9 @@ while getopts "sfpeo" opt; do
             echo "F" > $isPaused
             ;;
         f) finishTimer ;;
+        p) togglPause ;;
         e) addEvent ;;
         o) dayOff ;;
         \?) echo "invalid option"; exit 1;;
     esac
 done
-
