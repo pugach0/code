@@ -40,5 +40,6 @@ function quest2(){
 }
 quest2
 
+touch "$config/log.txt"
 echo "Installation successful"
 echo "-s for start -f for finish -e for event -o for day off"

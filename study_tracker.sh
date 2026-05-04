@@ -2,12 +2,13 @@ log="$HOME/.config/logs/log1.txt"
 timer="$HOME/.config/code/variables/st/timer.txt"
 isPaused="$HOME/.config/code/variables/st/isPaused.txt"
 topic="$HOME/.config/code/variables/st/topic.txt"
+events="$(grep "FINISH" "$log")"
 
 startTimer(){
     if [[ $1 == "I" ]]; then
         topicTmp=$(echo "" | dmenu -p "Choose topic")
+        if [[ $topicTmp == "Q" ]]; then exit; fi
         echo "${topicTmp// /_}" > $topic
-        #echo "$(date +%d.%m.%y\ %T) START "$topic"" >> "$log"
         start=$(date +%s)
         polybar topmiddle &
         while true; do
@@ -15,7 +16,7 @@ startTimer(){
             echo $(( now - start )) > "$timer"
             sleep 1
         done
-        else
+    else
         pastTime=$(cat $timer)
         start=$(date +%s)
         while true; do
@@ -28,6 +29,9 @@ startTimer(){
 
 
 finishTimer(){
+    if [[ $(cat $timer) == "0" ]]; then 
+        exit
+    fi
     echo "$(date +%d.%m.%y\ %T) FINISH $(~/.config/code/study_tracker/timer/toggl-time.sh) $(cat $topic)"  >> $log 
     echo "logging finished"
     [[ -f "$timer.pid" ]] && kill "$(cat "$timer.pid")" 2>/dev/null
@@ -37,30 +41,34 @@ finishTimer(){
     pkill -f "study"
 }
 
-togglPause (){
-    if [[ "$(cat $isPaused)" == "F" ]]; then
-        kill "$(cat "$timer.pid")"
-        echo "T" > $isPaused
-    else
-        startTimer "P" &
-        echo $! > "$timer.pid"
-        echo "F" > $isPaused
-    fi
-}
-
 addEvent(){
     event=$(echo "" | dmenu -p "Add event")
+    if [[ $event == "Q" ]]; then 
+        exit
+    fi
+    if [[ $event =~ ^[0-9]{2}\.[0-9]{2}\.[0-9]{2}$ ]]; then 
+        sed -i "/EVENT/ { /$event/d; }" "$log"
+        exit
+    fi
     echo "$(date +%d.%m.%y\ %T) EVENT ${event// /_}" >> $log
 }
 
 dayOff(){
-    dateOff=$(echo "" | dmenu -p "Enter date (dd.mm.yy)")
-    if [[ $dateOff =~ ^[0-9]{2}\.[0-9]{2}\.[0-9]{2}$ ]]; then
-        echo "$dateOff DAYOFF" >> $log
+    dateOff=$(echo "" | dmenu -p "Enter date -d argument")
+    if [[ $dateOff =~ ^R\ [0-9]{2}\.[0-9]{2}\.[0-9]{2}$ ]]; then 
+        sed -i "/DAYOFF/ { /${dateOff:2}/d; }" "$log"
+        exit
+    fi
+    formattedDate=$(date -d "$dateOff" +%d.%m.%y 2>> "$log")
+    if [[ $? -eq 0 && -n "$dateOff" ]]; then
+        echo "$formattedDate DAYOFF" >> $log
     elif [[ $dateOff =~ Q ]]; then
         dayOff
     fi
+    exit
 }
+
+#^[0-9]{2}\.[0-9]{2}\.[0-9]{2}$
 
 while getopts "sfpeo" opt; do
     case $opt in
